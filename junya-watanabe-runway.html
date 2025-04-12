@@ -9,70 +9,16 @@
     <!-- A-Frame MUST load first -->
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 
-    <!-- Wait for A-Frame to load before other scripts -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        // Make sure A-Frame is fully loaded before loading other scripts
-        if (typeof AFRAME !== 'undefined') {
-          // Load remaining scripts
-          loadScriptsSequentially([
-            'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js',
-            'https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js',
-            'naf-components.js',
-            'junya.js',
-            'top-bar.js',
-          ])
-        } else {
-          console.error('A-Frame not loaded properly!')
-        }
-      })
+    <!-- Socket.io and NAF components for multiplayer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="naf-components.js"></script>
 
-      // Function to load scripts in sequence
-      function loadScriptsSequentially(scripts) {
-        if (scripts.length === 0) return
+    <!-- Extras for movement controls -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
 
-        const scriptSrc = scripts.shift()
-        const script = document.createElement('script')
-        script.src = scriptSrc
-
-        script.onload = function () {
-          console.log(`Loaded: ${scriptSrc}`)
-          if (scripts.length > 0) {
-            loadScriptsSequentially(scripts)
-          }
-        }
-
-        script.onerror = function () {
-          console.error(`Failed to load: ${scriptSrc}`)
-          if (scripts.length > 0) {
-            loadScriptsSequentially(scripts)
-          }
-        }
-
-        document.head.appendChild(script)
-      }
-
-      // Billboard component - defined after A-Frame loads
-      AFRAME.registerComponent('billboard', {
-        tick: function () {
-          const camera = this.el.sceneEl.camera
-          if (!camera) return
-
-          const object3D = this.el.object3D
-
-          // Get the camera's world position
-          const cameraWorldPos = new THREE.Vector3()
-          camera.getWorldPosition(cameraWorldPos)
-
-          // Make the entity face the camera's world position
-          object3D.lookAt(cameraWorldPos)
-
-          // Correct rotation to keep the image upright
-          object3D.rotation.x = 0
-          object3D.rotation.z = 0
-        },
-      })
-    </script>
+    <!-- Main site scripts -->
+    <script src="junya.js" defer></script>
+    <script src="top-bar.js" defer></script>
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="junya.css" />
@@ -98,22 +44,26 @@
         <button class="menu-button navigate">How to Move?</button>
       </div>
     </div>
+
     <div id="index" class="indexbar">
       <button class="index-close-btn" onclick="closeSidebar()">✖</button>
       <p>Sidebar Content Goes Here</p>
     </div>
     <!-- TOP BAR END -->
+
     <div class="fixed-left-text"></div>
     <div class="fixed-text" id="scene-text"></div>
     <div class="title-line"></div>
 
     <a-scene>
       <a-assets>
-        <!-- Add avatar model with proper ID for networking -->
+        <!-- Avatar model for networking -->
         <a-asset-item
           id="avatarModel"
           src="Assets/landing/yellow.gltf"
         ></a-asset-item>
+
+        <!-- Text images -->
         <img
           id="text-a"
           src="Assets/junya-watanabe-runway-archives/junya-text-1.png"
@@ -155,7 +105,7 @@
           src="Assets/junya-watanabe-runway-archives/junya-text-10.png"
         />
 
-        <!-- All your existing asset items... -->
+        <!-- Collection images - AW 93 -->
         <img
           id="a1"
           src="Assets/junya-watanabe-runway-archives/JW1_2_IMGCentury.png"
@@ -173,6 +123,7 @@
           src="Assets/junya-watanabe-runway-archives/JW1_5_IMGCentury.png"
         />
 
+        <!-- Collection images - AW 00 -->
         <img
           id="b1"
           src="Assets/junya-watanabe-runway-archives/JW2_1_IMGCentury.png"
@@ -186,6 +137,7 @@
           src="Assets/junya-watanabe-runway-archives/JW2_4_IMGCentury.png"
         />
 
+        <!-- Collection images - AW 03 -->
         <img
           id="c1"
           src="Assets/junya-watanabe-runway-archives/JW3_1_IMGCentury.png"
@@ -203,6 +155,7 @@
           src="Assets/junya-watanabe-runway-archives/JW3_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 06 -->
         <img
           id="d1"
           src="Assets/junya-watanabe-runway-archives/JW4_1_IMGCentury.png"
@@ -220,6 +173,7 @@
           src="Assets/junya-watanabe-runway-archives/JW4_4_IMGCentury.png"
         />
 
+        <!-- Collection images - AW 06 -->
         <img
           id="e1"
           src="Assets/junya-watanabe-runway-archives/JW5_1_IMGCentury.png"
@@ -237,6 +191,7 @@
           src="Assets/junya-watanabe-runway-archives/JW5_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 11 -->
         <img
           id="f1"
           src="Assets/junya-watanabe-runway-archives/JW6_1_IMGCentury.png"
@@ -254,6 +209,7 @@
           src="Assets/junya-watanabe-runway-archives/JW6_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 15 -->
         <img
           id="g1"
           src="Assets/junya-watanabe-runway-archives/JW7_1_IMGCentury.png"
@@ -271,6 +227,7 @@
           src="Assets/junya-watanabe-runway-archives/JW7_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 16 -->
         <img
           id="h1"
           src="Assets/junya-watanabe-runway-archives/JW8_1_IMGCentury.png"
@@ -288,6 +245,7 @@
           src="Assets/junya-watanabe-runway-archives/JW8_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 17 -->
         <img
           id="i1"
           src="Assets/junya-watanabe-runway-archives/JW9_1_IMGCentury.png"
@@ -305,6 +263,7 @@
           src="Assets/junya-watanabe-runway-archives/JW9_4_IMGCentury.png"
         />
 
+        <!-- Collection images - SS 21 -->
         <img
           id="j1"
           src="Assets/junya-watanabe-runway-archives/JW10_1_IMGCentury.png"
@@ -330,12 +289,12 @@
         position="0 10 5"
       ></a-entity>
 
-      <!-- Remove or comment out this static avatar, as it will be replaced by networked avatars -->
-      <!-- <a-gltf-model
+      <!-- Local static avatar - visual reference -->
+      <a-gltf-model
         src="Assets/landing/yellow.gltf"
         position="0 1 -5"
-        scale=""
-      ></a-gltf-model> -->
+        scale="5 5 5"
+      ></a-gltf-model>
 
       <!-- AW 93 -->
       <a-image
@@ -419,77 +378,406 @@
         billboard
       ></a-image>
 
-      <!-- Keep all your existing scene images... -->
+      <!-- AW 03 -->
+      <a-image
+        src="#text-c"
+        position="-22 10 -78"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#c4"
+        position="0 10 -81"
+        rotation="0 10 0"
+        width="-20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#c3"
+        position="0 10 -80"
+        rotation="-2 0 0"
+        width="-20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#c2"
+        position="0 10 -79"
+        rotation="-2 0 0"
+        width="-20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#c1"
+        position="0 10 -78"
+        rotation="-2 0 0"
+        width="-20"
+        height="30"
+        billboard
+      ></a-image>
 
+      <!-- SS 06 -->
+      <a-image
+        src="#text-d"
+        position="-2 10 -118"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#d4"
+        position="20 10 -121"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#d3"
+        position="20 10 -120"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#d2"
+        position="20 10 -119"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#d1"
+        position="20 10 -118"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- AW 06 -->
+      <a-image
+        src="#text-e"
+        position="18 10 -158"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#e4"
+        position="40 10 -161"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#e3"
+        position="40 10 -160"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#e2"
+        position="40 10 -159"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#e1"
+        position="40 10 -158"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- SS 11 -->
+      <a-image
+        src="#text-f"
+        position="40 10 -198"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#f4"
+        position="62 10 -201"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#f3"
+        position="62 10 -200"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#f2"
+        position="62 10 -199"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#f1"
+        position="62 10 -198"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- SS 15 -->
+      <a-image
+        src="#text-g"
+        position="65 10 -238"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#g4"
+        position="87 10 -241"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#g3"
+        position="87 10 -240"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#g2"
+        position="87 10 -239"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#g1"
+        position="87 10 -238"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- SS 16 -->
+      <a-image
+        src="#text-h"
+        position="91 10 -278"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#h4"
+        position="113 10 -281"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#h3"
+        position="113 10 -280"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#h2"
+        position="113 10 -279"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#h1"
+        position="113 10 -278"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- SS 17 -->
+      <a-image
+        src="#text-i"
+        position="116 10 -318"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#i4"
+        position="138 10 -321"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#i3"
+        position="138 10 -320"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#i2"
+        position="138 10 -319"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#i1"
+        position="138 10 -318"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- SS 21 -->
+      <a-image
+        src="#text-j"
+        position="138 10 -358"
+        rotation="0 10 0"
+        width="66"
+        height="31.5"
+        visible="false"
+      ></a-image>
+      <a-image
+        src="#j4"
+        position="160 10 -361"
+        rotation="0 10 0"
+        width="20"
+        height="30"
+      ></a-image>
+      <a-image
+        src="#j3"
+        position="160 10 -360"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#j2"
+        position="160 10 -359"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+      <a-image
+        src="#j1"
+        position="160 10 -358"
+        rotation="-2 0 0"
+        width="20"
+        height="30"
+        billboard
+      ></a-image>
+
+      <!-- Sky background -->
       <a-sky color="#000"></a-sky>
 
-      <!-- Camera rig structure for networking -->
-      <a-entity id="cameraRig" position="-20 12 49" rotation="0 0 0">
-        <a-camera
-          wasd-controls="acceleration: 10; fly: true;"
-          look-controls
-          id="mainCamera"
-        >
-        </a-camera>
-      </a-entity>
+      <!-- Desktop camera - PRIMARY CAMERA used for navigation and networking -->
+      <a-camera
+        id="desktopCamera"
+        position="-20 12 49"
+        wasd-controls
+        look-controls
+        vertical-move="speed: 10"
+      ></a-camera>
 
-      <!-- VR rig with identified ID for networking -->
+      <!-- Camera rig for VR Movement with Oculus -->
       <a-entity id="rig" movement-controls="speed: 0.1;" universal-controls>
         <a-entity
           camera
           look-controls="pointerLockEnabled: false"
           position="0 1.6 0"
         ></a-entity>
+        <!-- VR controllers -->
         <a-entity oculus-touch-controls="hand: left"></a-entity>
         <a-entity oculus-touch-controls="hand: right"></a-entity>
       </a-entity>
     </a-scene>
 
-    <!-- Scene update script -->
-    <script src="junya-scene-updater.js"></script>
-
-    <!-- Initialization script -->
+    <!-- Preload and cache images to prevent missing assets -->
     <script>
-      // This will ensure networking is initialized when everything is ready
-      document.addEventListener('DOMContentLoaded', function () {
-        // Wait for A-Frame and all components to initialize
-        document
-          .querySelector('a-scene')
-          .addEventListener('loaded', function () {
-            console.log(
-              '[CLIENT] A-Frame scene fully loaded - initializing networking'
-            )
+      // Function to preload images
+      function preloadImages() {
+        console.log('Preloading images to prevent missing assets...')
+        const imageSrcs = [
+          // Text images
+          'Assets/junya-watanabe-runway-archives/junya-text-1.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-2.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-3.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-4.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-5.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-6.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-7.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-8.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-9.png',
+          'Assets/junya-watanabe-runway-archives/junya-text-10.png',
 
-            // Wait a moment to ensure all components are ready
-            setTimeout(function () {
-              console.log('[CLIENT] Ready to initialize networking')
+          // Collection images
+          'Assets/junya-watanabe-runway-archives/JW1_2_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW1_3_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW1_4_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW1_5_IMGCentury.png',
 
-              // Make sure the camera rig has the animate-camera component
-              const cameraRig = document.querySelector('#cameraRig')
-              if (
-                cameraRig &&
-                typeof AFRAME.components['animate-camera'] !== 'undefined'
-              ) {
-                console.log('[CLIENT] Adding animate-camera component')
-                if (!cameraRig.hasAttribute('animate-camera')) {
-                  cameraRig.setAttribute('animate-camera', '')
-                }
-              } else {
-                console.error('[CLIENT] Could not initialize animate-camera')
+          'Assets/junya-watanabe-runway-archives/JW2_1_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW2_2_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW2_4_IMGCentury.png',
 
-                // Fallback if animate-camera isn't available
-                if (typeof setupNetworkedWorld === 'function') {
-                  console.log('[CLIENT] Using direct networking initialization')
-                  setupNetworkedWorld('junya-watanabe', '#cameraRig')
-                } else {
-                  console.error(
-                    '[CLIENT] setupNetworkedWorld function not found!'
-                  )
-                }
-              }
-            }, 1000)
-          })
-      })
+          'Assets/junya-watanabe-runway-archives/JW3_1_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW3_2_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW3_3_IMGCentury.png',
+          'Assets/junya-watanabe-runway-archives/JW3_4_IMGCentury.png',
+
+          // Add remaining image paths...
+        ]
+
+        // Preload each image
+        imageSrcs.forEach((src) => {
+          const img = new Image()
+          img.src = src
+          img.onload = () => console.log(`Loaded: ${src}`)
+          img.onerror = () => console.error(`Failed to load: ${src}`)
+        })
+      }
+
+      // Preload images when document is ready
+      document.addEventListener('DOMContentLoaded', preloadImages)
     </script>
   </body>
 </html>

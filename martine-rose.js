@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Register spin component if not already registered
   if (!AFRAME.components['spin']) {
     AFRAME.registerComponent('spin', {
-      schema: { speed: { type: 'number', default: 0.5 } },
+      schema: { speed: { type: 'number', default: 0.3 } },
 
       tick: function (time, timeDelta) {
         // Convert speed to smooth rotation per frame
@@ -19,92 +19,53 @@ document.addEventListener('DOMContentLoaded', function () {
     })
   }
 
-  // Register the camera animation component if not already registered
-  if (!AFRAME.components['animate-camera']) {
-    AFRAME.registerComponent('animate-camera', {
+  // Register set-start-position component if not already registered
+  if (!AFRAME.components['set-start-position']) {
+    AFRAME.registerComponent('set-start-position', {
       init: function () {
-        const cameraRig = document.querySelector('#rig')
-        if (!cameraRig) {
-          console.error('[CLIENT] Camera rig not found with selector #rig')
+        const rig = document.getElementById('rig')
+        if (!rig) {
+          console.error('Rig not found. Ensure #rig exists with id="rig"')
           return
         }
 
-        // Store initial position for animation
-        const initialPosition = cameraRig.getAttribute('position')
-        const targetPosition = { x: 0, y: 0, z: 15 } // Closer position to view the ball
-
-        console.log(
-          '[CLIENT] Setting up camera animation for Martine Rose x Nike scene'
-        )
-
-        setTimeout(() => {
-          // Animate Position
-          cameraRig.setAttribute('animation', {
-            property: 'position',
-            from: `${initialPosition.x} ${initialPosition.y} ${initialPosition.z}`,
-            to: `${targetPosition.x} ${targetPosition.y} ${targetPosition.z}`,
-            dur: 2500,
-            easing: 'easeInOutQuad',
+        const setPosition = (x, y, z) => {
+          requestAnimationFrame(() => {
+            rig.setAttribute('position', `${x} ${y} ${z}`)
           })
+        }
 
-          // Wait for animation to finish, then enable movement
-          setTimeout(() => {
-            cameraRig.removeAttribute('animation')
+        // Set appropriate start position based on mode
+        if (this.el.sceneEl.is('vr-mode')) {
+          setPosition(0, 0, 25) // VR Start Position
+        } else {
+          setPosition(0, 0, 25) // Desktop Start Position
+        }
 
-            // Enable movement
-            const camera = cameraRig.querySelector('[camera]')
-            if (camera) {
-              camera.setAttribute(
-                'wasd-controls',
-                'fly: true; acceleration: 5;'
-              )
-            }
+        // Adjust on enter and exit VR
+        this.el.sceneEl.addEventListener('enter-vr', function () {
+          setPosition(0, 0, 25) // VR Start Position
+        })
 
-            // Add networking AFTER camera animations complete
-            console.log(
-              '[CLIENT] Animation complete, setting up networking for Martine Rose x Nike scene'
-            )
-            if (typeof setupNetworkedWorld === 'function') {
-              // Pass 'martine-rose' as the world name for proper avatar scaling (50 50 50)
-              setupNetworkedWorld('martine-rose', '#rig', 'martine-rose')
-              console.log(
-                '[CLIENT] Networking initialized for Martine Rose room'
-              )
-            } else {
-              console.error('[CLIENT] setupNetworkedWorld function not found')
-            }
-          }, 2500) // Matches animation duration
-        }, 1500) // Pause before animation starts
+        this.el.sceneEl.addEventListener('exit-vr', function () {
+          setPosition(0, 0, 25) // Desktop Start Position
+        })
       },
     })
   }
 
-  // Attach the animate-camera component to the camera rig if it exists
-  const cameraRig = document.querySelector('#rig')
-  if (cameraRig) {
-    console.log('[CLIENT] Attaching animate-camera component to #rig')
-    cameraRig.setAttribute('animate-camera', '')
-  } else {
-    console.error('[CLIENT] Cannot find camera rig with selector #rig')
-  }
-
-  // Fallback in case animation component fails
-  console.log('[CLIENT] Setting up fallback networking initialization')
-  window.networkingInitialized = window.networkingInitialized || false
-
+  // Initialize networking after a delay to ensure elements are loaded
+  console.log('[CLIENT] Setting up networking for Martine Rose world')
   setTimeout(() => {
-    if (
-      typeof setupNetworkedWorld === 'function' &&
-      !window.networkingInitialized
-    ) {
-      console.log(
-        '[CLIENT] Using fallback networking initialization for Martine Rose scene'
-      )
-      window.networkingInitialized = true
+    if (typeof setupNetworkedWorld === 'function') {
+      console.log('[CLIENT] Initializing networked world for Martine Rose')
       // Pass 'martine-rose' as the world name for proper avatar scaling (50 50 50)
       setupNetworkedWorld('martine-rose', '#rig', 'martine-rose')
+      window.networkingInitialized = true
+    } else {
+      console.error('[CLIENT] setupNetworkedWorld function not found')
     }
-  }, 7000) // Wait longer to ensure everything is loaded
+  }, 2000) // Wait 2 seconds to ensure everything is loaded
 })
 
 console.log('[CLIENT] martine-rose-networked.js loaded successfully')
